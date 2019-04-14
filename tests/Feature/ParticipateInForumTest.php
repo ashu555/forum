@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class ParticipateInForum extends TestCase
 {
-    // use DatabaseMigrations;
+    use DatabaseMigrations;
     /**
      * A basic feature test example.
      *
@@ -21,16 +21,27 @@ class ParticipateInForum extends TestCase
         
         $thread = create('App\Thread');
 
-        $reply = create('App\Reply');
+        $reply = make('App\Reply');
         $this->post($thread->path().'/replies', $reply->toArray());
         $this->get($thread->path())
         ->assertSee($reply->body);
     }
 
-    // public function test_unauthenticated_user_cannot_add_replies()
-    // {
-    //     $this->expectException('\Illuminate\Auth\AuthenticationException');
-    //     $this->post('/threads/1/replies', []);
+    public function test_unauthenticated_user_cannot_add_replies()
+    {
+        $this->withExceptionHandling()
+        ->post('/threads/channel/1/replies', [])
+        ->assertRedirect('/login');
        
-    // }
+    }
+
+    function test_a_reply_requires_a_body()
+    {
+        $this->withExceptionHandling()->signIn();
+        $thread = create('App\Thread');
+
+        $reply = make('App\Reply', ['body'=>null]);
+        $this->post($thread->path().'/replies', $reply->toArray())
+        ->assertSessionHasErrors('body');
+    }
 }

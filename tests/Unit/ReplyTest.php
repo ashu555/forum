@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ReplyTest extends TestCase
 {
-	// use DatabaseMigrations;
+	use DatabaseMigrations;
     /**
      * A basic unit test example.
      *

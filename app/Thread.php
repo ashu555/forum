@@ -9,12 +9,17 @@ class Thread extends Model
 	protected $guarded = [];
     public function path()
     {
-    	return url('/threads/' .$this->id);
+    	return url('/threads/'.$this->channel->slug.'/'.$this->id);
     }
 
     public function replies()
     {
     	return $this->hasMany(Reply::class);
+    }
+
+    public function channel()
+    {
+        return $this->belongsTo(Channel::class);
     }
 
     public function creator()
